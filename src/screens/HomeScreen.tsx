@@ -3,16 +3,33 @@ import { View, StyleSheet, ImageBackground, ScrollView, TouchableOpacity } from 
 import { Appbar, Badge, Text, Button, Avatar, ActivityIndicator } from 'react-native-paper';
 
 import { themeColors } from '../theme/colors';
-import ProductCard, { Product } from '../components/ProductCard';
+
 import LoadingSpinner from '../components/LoadingSpinner';
+import AppHeader from '../components/AppHeader';
+import PromoBanner from '../components/PromoBanner';
+import ProductCard, { Product } from '../components/ProductCard';
+import ProductDetailModal from '../components/ProductDetailModal';
+
 import { useProductStore } from '../store/useProductStore';
 
 const categories = ['Destacados', 'Frutas', 'Aceites', 'Bebidas', 'Cuidado'];
 
 export default function HomeScreen() {
   const [activeCategory, setActiveCategory] = useState('Destacados');
+  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+  const [modalVisible, setModalVisible] = useState(false);
   
   const { products, isLoading, fetchProducts } = useProductStore();
+
+  const handleOpenModal = (product: Product) => {
+    setSelectedProduct(product);
+    setModalVisible(true);
+  };
+
+  const handleCloseModal = () => {
+    setModalVisible(false);
+    setTimeout(() => setSelectedProduct(null), 300); // Limpia después de la animación
+  };
 
   useEffect(() => {
     fetchProducts();
@@ -25,49 +42,11 @@ export default function HomeScreen() {
   return (
     <View style={styles.container}>
       
-      <Appbar.Header style={styles.header} elevated={false}>
-        <TouchableOpacity onPress={() => console.log('Logo presionado')} style={styles.logoBorderWrapper}>
-          <Avatar.Image 
-            size={38} 
-            source={require('../../assets/logo.png')} 
-            style={{ backgroundColor: 'transparent' }} 
-          />
-        </TouchableOpacity>
-        
-        <Appbar.Content title="Fucsol" titleStyle={styles.headerTitle} />
-        
-        <View>
-          <Appbar.Action icon="cart-outline" onPress={() => console.log('Carrito')} color={themeColors.textDark} />
-          <Badge style={styles.badge} size={16}>2</Badge>
-        </View>
-      </Appbar.Header>
+      <AppHeader />
 
       <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
         
-        <ImageBackground 
-          source={{ uri: 'https://images.unsplash.com/photo-1589923188900-85dae523342b?q=80&w=800&auto=format&fit=crop' }} 
-          style={styles.bannerContainer} 
-          imageStyle={{ borderRadius: 16 }} 
-          resizeMode="cover"
-        >
-          <View style={styles.bannerOverlay}>
-            <View style={styles.promoTag}>
-              <Text style={styles.promoTagText}>PROMO</Text>
-            </View>
-            <Text variant="headlineMedium" style={styles.bannerTitle}>Coco Lovers</Text>
-            <Text variant="bodyMedium" style={styles.bannerSubtitle}>Disfruta de la frescura tropical con 20% de descuento.</Text>
-            <Button 
-              mode="contained" 
-              buttonColor={themeColors.surface} 
-              textColor={themeColors.textDark} 
-              style={styles.bannerButton} 
-              labelStyle={{ fontWeight: 'bold' }} 
-              onPress={() => console.log('Ver Oferta')}
-            >
-              Ver Oferta
-            </Button>
-          </View>
-        </ImageBackground>
+        <PromoBanner />
 
         <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.categoriesContainer}>
           {categories.map((cat, index) => {
@@ -100,7 +79,8 @@ export default function HomeScreen() {
               <ProductCard 
                 key={product.id} 
                 product={product} 
-                onAddPress={handleAddToCart} 
+                onAddPress={handleAddToCart}
+                onCardPress={handleOpenModal} 
               />
             ))
           )}
@@ -108,6 +88,14 @@ export default function HomeScreen() {
 
         <View style={{ height: 40 }} />
       </ScrollView>
+
+      <ProductDetailModal 
+        visible={modalVisible}
+        product={selectedProduct}
+        onClose={handleCloseModal}
+        onAddToCart={handleAddToCart}
+      />
+
     </View>
   );
 }
@@ -130,14 +118,6 @@ const styles = StyleSheet.create({
   headerTitle: { fontWeight: '900', textAlign: 'center', color: themeColors.textDark, fontSize: 20 },
   badge: { position: 'absolute', top: 4, right: 4, backgroundColor: themeColors.danger, fontWeight: 'bold' },
   content: { flex: 1, paddingHorizontal: 16, paddingTop: 8 },
-  
-  bannerContainer: { height: 180, width: '100%', marginBottom: 20, borderRadius: 16, overflow: 'hidden' },
-  bannerOverlay: { flex: 1, backgroundColor: 'rgba(0, 20, 0, 0.4)', padding: 20, justifyContent: 'center', alignItems: 'flex-start' },
-  promoTag: { backgroundColor: themeColors.primary, paddingHorizontal: 10, paddingVertical: 6, borderRadius: 8, marginBottom: 12 },
-  promoTagText: { color: themeColors.surface, fontSize: 12, fontWeight: 'bold' },
-  bannerTitle: { color: themeColors.surface, fontWeight: 'bold', marginBottom: 8 },
-  bannerSubtitle: { color: themeColors.surface, marginBottom: 16, maxWidth: '70%', opacity: 0.9 },
-  bannerButton: { borderRadius: 12, paddingHorizontal: 4 },
   
   categoriesContainer: { marginBottom: 24, flexDirection: 'row' },
   categoryChip: { backgroundColor: themeColors.surface, paddingHorizontal: 20, paddingVertical: 10, borderRadius: 20, marginRight: 12, borderWidth: 1, borderColor: themeColors.border },
