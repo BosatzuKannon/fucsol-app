@@ -6,7 +6,9 @@ import { themeColors } from '../theme/colors';
 export interface Product {
   id: string;
   name: string;
-  category: string;
+  description?: string;
+  category?: string;
+  stock?: number;
   price: number;
   image_url: string;
 }
@@ -14,11 +16,12 @@ export interface Product {
 interface ProductCardProps {
   product: Product;
   onAddPress: (product: Product) => void;
+  onCardPress: (product: Product) => void;
 }
 
-export default function ProductCard({ product, onAddPress }: ProductCardProps) {
+export default function ProductCard({ product, onAddPress, onCardPress }: ProductCardProps) {
   return (
-    <Card style={styles.productCard} mode="contained">
+    <Card style={styles.productCard} mode="contained" onPress={() => onCardPress(product)}>
       <View style={styles.imageContainer}>
         <Image source={{ uri: product.image_url }} style={styles.productImage} />
         <IconButton 
