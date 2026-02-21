@@ -1,28 +1,19 @@
 import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { MaterialCommunityIcons } from '@expo/vector-icons'; 
 
 import { useAuthStore } from '../store/authStore';
 
+// Vistas Principales (Raíz)
 import HomeScreen from '../screens/HomeScreen';
-import ProfileScreen from '../screens/ProfileScreen';
-import LoginScreen from '../screens/LoginScreen';
-import RegisterScreen from '../screens/RegisterScreen';
 import CartScreen from '../screens/CartScreen';
 import OrdersScreen from '../screens/OrdersScreen';
 
-const Tab = createBottomTabNavigator();
-const AuthStack = createNativeStackNavigator();
+// Navegadores Modulares
+import AuthNavigator from './AuthNavigator';
+import ProfileNavigator from './ProfileNavigator';
 
-function AuthStackNavigator() {
-  return (
-    <AuthStack.Navigator screenOptions={{ headerShown: false }}>
-      <AuthStack.Screen name="Login" component={LoginScreen} />
-      <AuthStack.Screen name="Register" component={RegisterScreen} />
-    </AuthStack.Navigator>
-  );
-}
+const Tab = createBottomTabNavigator();
 
 export default function AppNavigator() {
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
@@ -57,12 +48,30 @@ export default function AppNavigator() {
       {isAuthenticated ? (
         <>
           <Tab.Screen name="Pedidos" component={OrdersScreen} />
-          <Tab.Screen name="Carrito" component={CartScreen} />
-          <Tab.Screen name="Perfil" component={ProfileScreen} />
+          <Tab.Screen 
+            name="Carrito" 
+            component={CartScreen} 
+            options={{ 
+              tabBarBadge: 2, 
+              tabBarBadgeStyle: { 
+                backgroundColor: '#D32F2F', 
+                color: 'white', 
+                fontSize: 10,
+                textAlign: 'center',
+                textAlignVertical: 'center',
+                lineHeight: 16,
+                minWidth: 16,
+                height: 16,
+              } 
+            }} 
+          />
+          {/* Usamos el ProfileNavigator modular */}
+          <Tab.Screen name="Perfil" component={ProfileNavigator} />
         </>
       ) : (
         <>
-          <Tab.Screen name="Perfil" component={AuthStackNavigator} />
+          {/* Usamos el AuthNavigator modular */}
+          <Tab.Screen name="Perfil" component={AuthNavigator} />
         </>
       )}
     </Tab.Navigator>

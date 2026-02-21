@@ -3,7 +3,7 @@ import { View, StyleSheet, KeyboardAvoidingView, Platform, ScrollView, Touchable
 import { TextInput, Button, Text, Snackbar } from 'react-native-paper';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { useAuthStore } from '../store/authStore';
+import { useAuthStore } from '../../store/authStore';
 
 type AuthStackParamList = { Login: undefined; Register: undefined; };
 type NavigationProp = NativeStackNavigationProp<AuthStackParamList, 'Register'>;
@@ -60,7 +60,7 @@ export default function RegisterScreen() {
           
           <View style={styles.logoContainer}>
             <View style={styles.logoCircle}>
-              <Image source={require('../../assets/logo.png')} style={styles.logoImage} resizeMode="contain" />
+              <Image source={require('../../../assets/logo.png')} style={styles.logoImage} resizeMode="contain" />
             </View>
           </View>
 
