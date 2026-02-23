@@ -3,16 +3,16 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { MaterialCommunityIcons } from '@expo/vector-icons'; 
 
 import { useAuthStore } from '../store/authStore';
-import { useCartStore } from '../store/cartStore'; // <-- Importamos el store del carrito
+import { useCartStore } from '../store/cartStore'; 
 
 // Vistas Principales (Raíz)
 import HomeScreen from '../screens/HomeScreen';
-import OrdersScreen from '../screens/OrdersScreen';
+import OrderNavigator from './OrderNavigator';
 
 // Navegadores Modulares
 import AuthNavigator from './AuthNavigator';
 import ProfileNavigator from './ProfileNavigator';
-import CartNavigator from './CartNavigator'; // <-- Importamos tu nuevo navegador
+import CartNavigator from './CartNavigator'; 
 
 const Tab = createBottomTabNavigator();
 
@@ -51,7 +51,7 @@ export default function AppNavigator() {
 
       {isAuthenticated ? (
         <>
-          <Tab.Screen name="Pedidos" component={OrdersScreen} />
+          <Tab.Screen name="Pedidos" component={OrderNavigator} />
           <Tab.Screen 
             name="Carrito" 
             component={CartNavigator} // <-- Usamos el navegador modular
