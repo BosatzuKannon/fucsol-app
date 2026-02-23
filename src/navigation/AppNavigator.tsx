@@ -3,20 +3,24 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { MaterialCommunityIcons } from '@expo/vector-icons'; 
 
 import { useAuthStore } from '../store/authStore';
+import { useCartStore } from '../store/cartStore'; // <-- Importamos el store del carrito
 
 // Vistas Principales (Raíz)
 import HomeScreen from '../screens/HomeScreen';
-import CartScreen from '../screens/CartScreen';
 import OrdersScreen from '../screens/OrdersScreen';
 
 // Navegadores Modulares
 import AuthNavigator from './AuthNavigator';
 import ProfileNavigator from './ProfileNavigator';
+import CartNavigator from './CartNavigator'; // <-- Importamos tu nuevo navegador
 
 const Tab = createBottomTabNavigator();
 
 export default function AppNavigator() {
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
+  
+  // Extraemos el total de ítems del carrito
+  const totalItems = useCartStore((state) => state.getTotalItems());
 
   return (
     <Tab.Navigator
@@ -50,9 +54,10 @@ export default function AppNavigator() {
           <Tab.Screen name="Pedidos" component={OrdersScreen} />
           <Tab.Screen 
             name="Carrito" 
-            component={CartScreen} 
+            component={CartNavigator} // <-- Usamos el navegador modular
             options={{ 
-              tabBarBadge: 2, 
+              // Lógica dinámica: Si hay más de 0, muestra el número. Si es 0, no muestra el globo.
+              tabBarBadge: totalItems > 0 ? totalItems : undefined, 
               tabBarBadgeStyle: { 
                 backgroundColor: '#D32F2F', 
                 color: 'white', 
@@ -65,12 +70,10 @@ export default function AppNavigator() {
               } 
             }} 
           />
-          {/* Usamos el ProfileNavigator modular */}
           <Tab.Screen name="Perfil" component={ProfileNavigator} />
         </>
       ) : (
         <>
-          {/* Usamos el AuthNavigator modular */}
           <Tab.Screen name="Perfil" component={AuthNavigator} />
         </>
       )}
