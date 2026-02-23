@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 
-const API_URL = 'http://192.168.40.9:3000'; 
+const API_URL = 'http://192.168.88.184:3000'; 
 
 export interface Address {
   id: string;

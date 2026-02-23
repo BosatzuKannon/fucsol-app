@@ -16,7 +16,7 @@ export const useProductStore = create<ProductState>((set) => ({
   fetchProducts: async () => {
     set({ isLoading: true, error: null });
     try {
-      const response = await fetch('http://192.168.40.9:3000/products');
+      const response = await fetch('http://192.168.88.184:3000/products');
       
       if (!response.ok) {
         throw new Error('Error al conectar con el servidor');
